@@ -5,6 +5,7 @@ import win32gui, win32ui, win32con
 class WindowCapture:
     w = 0
     h = 0
+    hwnd = None
 
     def __init__(self):
         self.w = 1920
@@ -12,10 +13,7 @@ class WindowCapture:
     
 
     def getScreenshot(self):
-
-        #hwnd = win32gui.FindWindow(None, windowname)
-        hwnd = None
-        wDC = win32gui.GetWindowDC(hwnd)
+        wDC = win32gui.GetWindowDC(self.hwnd)
         dcObj = win32ui.CreateDCFromHandle(wDC)
         cDC = dcObj.CreateCompatibleDC()
         dataBitMap = win32ui.CreateBitmap()
@@ -31,7 +29,7 @@ class WindowCapture:
         #Free Resources
         dcObj.DeleteDC()
         cDC.DeleteDC()
-        win32gui.ReleaseDC(hwnd, wDC)
+        win32gui.ReleaseDC(self.hwnd, wDC)
         win32gui.DeleteObject(dataBitMap.GetHandle())
 
         img = img[...,:3]
@@ -39,4 +37,11 @@ class WindowCapture:
         img = np.ascontiguousarray(img)
 
         return img
+
+    @staticmethod
+    def listWindowNames():
+        def winEnumHandler(hwnd, ctx):
+            if win32gui.IsWindowVisible(hwnd):
+                print(hex(hwnd), win32gui.GetWindowText(hwnd))
+        win32gui.EnumWindows(winEnumHandler, None)
 

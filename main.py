@@ -1,9 +1,11 @@
 import cv2
 import numpy as np
 import os
-from time import time
 import pyautogui
 import win32gui, win32ui, win32con
+
+from timer import Timer
+from time import time
 from playsound import playsound
 from windowcapture import WindowCapture
 from vision import findClickPositions
@@ -20,7 +22,7 @@ while(start == False):
     screenshot = wincap.getScreenshot()
 
     # cv2.imshow('Computer Vision', screenshot)
-    if findClickPositions('DotaStart.jpg', screenshot, 0.98, 'rectangles') == True:
+    if findClickPositions('DotaStart.jpg', screenshot, 0.98, 'default') == True:
         start = True
 
     print('FPS {}'.format(1 / (time() - loop_time)))
@@ -28,9 +30,9 @@ while(start == False):
 
     if cv2.waitKey(1) == ord('q'):
         cv2.destroyAllWindows()
-        break
+        start = True
 
-playsound('duck-quack.mp3')
-print('Done.')
+cv2.destroyAllWindows()
+Timer.startTimer()
 
 
